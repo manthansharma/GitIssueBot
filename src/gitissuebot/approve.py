@@ -45,9 +45,9 @@ def has_ignored_title(issue, config):
     return False
 
 
-def has_accepted_titles(issue, config):
-    for accepted_titles in config["accepted_titles"]:
-        if accepted_titles.lower() in issue["title"].lower():
+def has_recognized_titles(issue, config):
+    for recognized_titles in config["recognized_titles"]:
+        if recognized_titles.lower() in issue["title"].lower():
             return True
 
     return False
@@ -74,7 +74,7 @@ def validator(issue, headers, config):
     if has_ignored_labels(issue, config) \
             or has_ignored_title(issue, config) \
             or has_whitelisted_author(issue, config)\
-            or not has_accepted_titles(issue, config):
+            or not has_recognized_titles(issue, config):
         return True
 
     lower_body = issue["body"].lower()
@@ -436,10 +436,10 @@ def main(args=None):
         config["ignored_titles"] = filter(
             lambda x: x is not None and len(x) > 0,
             map(str.strip, args.ignored_titles.split(",")))
-    if args.accepted_titles is not None:
-        config["accepted_titles"] = filter(
+    if args.recognized_titles is not None:
+        config["recognized_titles"] = filter(
             lambda x: x is not None and len(x) > 0,
-            map(str.strip, args.accepted_titles.split(",")))
+            map(str.strip, args.recognized_titles.split(",")))
     if args.grace_period is not None:
         config["grace_period"] = args.grace_period
     if args.phrase is not None:
@@ -541,8 +541,8 @@ def argparser(parser=None):
                         help="Comma-separated list of issue title parts which "
                              "should cause the issue to be ignored (e.g. \"["
                              "Feature Request]\"), defaults to an empty list")
-    parser.add_argument("--accepted-titles", action="store",
-                        dest="accepted_titles",
+    parser.add_argument("--recognized-titles", action="store",
+                        dest="recognized_titles",
                         help="Comma-separated list of issue title parts which "
                              "should cause the issue to be worked on (e.g. \"["
                              "Feature Request]\"), defaults to an empty list")
